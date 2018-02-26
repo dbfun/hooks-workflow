@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Проверка коммита на соответствие стандартам
+
+source $(dirname "$0")/common.sh
+
+echoColorVerbose "hook: pre-commit"
+
+
+# Код возврата (0 - нет ошибки)
+# Запустим все проверки, вместо того, чтобы выходить с ошибкой после каждого теста
+# Это покажет полную картину на случай, если человек решит коммитить с помощью "-n"
+
+retcode=0
+
+# Проверка на файлы, которые не должны попасть в коммит
+# Пропускаются файлы, которые уже добавлены в git (@see --diff-filter)
+
+if [ "${GIT_HOOKS['files.check.tmp']}" -eq "1" ]; then
+	FILES_PATTERN='\.(tmp|old|log|swp|bak)$'
+	FORBIDDEN=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP $FILES_PATTERN)
+	if [ "$?" -eq "0" ]; then
+		echo -e "$Red"Коммит отклонен: найдены запрещенные файлы. Пожалуйста, удалите их:"$Color_Off"
+		echo -e $Cyan"$FORBIDDEN"$Color_Off
+		echo
+		retcode=1
+	fi
+fi
+
+
+# Проверка на пробелы и CRLF
+# Проверить, влияет ли настройка git config core.whitespace
+if [ "${GIT_HOOKS['files.check.whitespace']}" -eq "1" ]; then
+	WHITESPACE=$(git diff --check --cached)
+	if [ "$?" -ne "0" ]; then
+		echo -e "$Red"Коммит отклонен: не пройден контроль пробелов:"$Color_Off"
+		echo "$WHITESPACE"
+		echo
+		retcode=1
+	fi
+fi
+
+
+# Проверка на BOM-символ
+if [ "${GIT_HOOKS['files.check.bom']}" -eq "1" ]; then
+	FILES_PATTERN='\.(php|js|styl|css|html?)$'
+	WITH_BOM=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP $FILES_PATTERN | xargs --no-run-if-empty file | grep "with BOM")
+	if [ "$?" -eq "0" ]; then
+		echo -e "$Red"Коммит отклонен: найден символ BOM. Пожалуйста, исправьте:"$Color_Off"
+		echo -e $Cyan"$WITH_BOM"$Color_Off
+		echo
+		retcode=1
+	fi
+fi
+
+# Проверка на стандарты кодирования
+if [ "${GIT_HOOKS['php.check.codestyle']}" -eq "1" ]; then
+	source $(dirname "$0")/check-codestyle.sh
+	# echo phpversion();
+	# echo PHP_BINARY;
+fi
+
+exit $retcode

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Проверка формата сообщения перед коммитом
+
+source $(dirname "$0")/common.sh
+
+echoColorVerbose "hook: commit-msg"
+
+if [ ! -z "${GIT_HOOKS['commit.msg.regexp']}" ]; then
+	grep -qP "${GIT_HOOKS['commit.msg.regexp']}" $1
+	if [ $? -ne 0 ]; then
+		echo -e "$Red"Коммит отклонен: сообщение коммита не содержит номер задачи или описание"$Color_Off"
+		echo -e "$Green"Пример:"$Color_Off" 153623: ЭЦП bugfix - авторизация пользователя в AD
+		echo
+		exit 1
+	fi
+fi
