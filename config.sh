@@ -27,6 +27,11 @@ GIT_HOOKS[commit.msg.regexp]='[0-9]+:.+'
 # Default value: "1"
 # GIT_HOOKS[php.check.codestyle]='1'
 
-# Путь до PHP CLI
+# Путь до PHP CLI - необходимо правильно указать для корректного запуска CodeSniffer
 # Default value: `which php`
+# Для 5.6 remi: /opt/remi/php56/root/usr/bin/php
 # GIT_HOOKS[php.bin]='/usr/bin/php'
+
+# Путь до PHP CodeSniffe, также необходимо указать GIT_HOOKS[php.bin] для вызова "правильного" PHP
+# Default value: `which phpcs`
+# GIT_HOOKS[phpcs.bin]='/usr/bin/phpcs'

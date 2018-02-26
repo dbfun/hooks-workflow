@@ -58,6 +58,8 @@ git commit -nm "обновление задач" -- .
 
 # Ссылки для изучения
 
+## Git hooks
+
 * [Перехватчики в Git](https://git-scm.com/book/ru/v1/%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-Git-%D0%9F%D0%B5%D1%80%D0%B5%D1%85%D0%B2%D0%B0%D1%82%D1%87%D0%B8%D0%BA%D0%B8-%D0%B2-Git)
 * [Забудьте про SVN](https://gist.github.com/aminin/4520418)
 * [Git Hooks (en), atlassian.com](https://www.atlassian.com/git/tutorials/git-hooks)
@@ -66,7 +68,13 @@ git commit -nm "обновление задач" -- .
 * [Deploying Websites With a Tiny Git Hook (en)](http://ryanflorence.com/deploying-websites-with-a-tiny-git-hook/)
 * [Tips for using a git pre-commit hook (en)](http://codeinthehole.com/tips/tips-for-using-a-git-pre-commit-hook/)
 
+## Качество кода
+
+* [PHP Quality Assurance](https://phpqa.io/)
+* [Continuous integration для php](https://habrahabr.ru/post/68571/)
+
 
 # TODO
 
   * Проверка на копипасту: [phpcpd.noarch : Copy/Paste Detector (CPD) for PHP code](https://github.com/sebastianbergmann/phpcpd)
+	* [PMD](https://pmd.github.io/)?

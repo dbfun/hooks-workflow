@@ -18,7 +18,7 @@ retcode=0
 
 if [ "${GIT_HOOKS['files.check.tmp']}" -eq "1" ]; then
 	FILES_PATTERN='\.(tmp|old|log|swp|bak)$'
-	FORBIDDEN=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP $FILES_PATTERN)
+	FORBIDDEN=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP "$FILES_PATTERN")
 	if [ "$?" -eq "0" ]; then
 		echo -e "$Red"Коммит отклонен: найдены запрещенные файлы. Пожалуйста, удалите их:"$Color_Off"
 		echo -e $Cyan"$FORBIDDEN"$Color_Off
@@ -44,7 +44,7 @@ fi
 # Проверка на BOM-символ
 if [ "${GIT_HOOKS['files.check.bom']}" -eq "1" ]; then
 	FILES_PATTERN='\.(php|js|styl|css|html?)$'
-	WITH_BOM=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP $FILES_PATTERN | xargs --no-run-if-empty file | grep "with BOM")
+	WITH_BOM=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP "$FILES_PATTERN" | xargs --no-run-if-empty file | grep "with BOM")
 	if [ "$?" -eq "0" ]; then
 		echo -e "$Red"Коммит отклонен: найден символ BOM. Пожалуйста, исправьте:"$Color_Off"
 		echo -e $Cyan"$WITH_BOM"$Color_Off
@@ -56,8 +56,6 @@ fi
 # Проверка на стандарты кодирования
 if [ "${GIT_HOOKS['php.check.codestyle']}" -eq "1" ]; then
 	source $(dirname "$0")/check-codestyle.sh
-	# echo phpversion();
-	# echo PHP_BINARY;
 fi
 
 exit $retcode

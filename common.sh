@@ -17,6 +17,17 @@ else
 	source $(dirname "$0")/colors.sh
 fi
 
+# С чем делать git-diff
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+
 #
 # Конфигурация
 #
@@ -46,6 +57,11 @@ if [[ ! -n "${GIT_HOOKS['php.bin']}" ]]; then
 	GIT_HOOKS[php.bin]=`which php`
 fi
 
+if [[ ! -n "${GIT_HOOKS['phpcs.bin']}" ]]; then
+	GIT_HOOKS[phpcs.bin]=`which phpcs`
+fi
+
+
 #
 # Функции
 #
@@ -53,19 +69,10 @@ fi
 # Вывод сообщений, если включен подробный режим
 function echoVerbose {
 	if [ -n "$GIT_HOOKS_VERBOSE" ] && [ "$GIT_HOOKS_VERBOSE" -eq "1" ]; then
-		echo -e $1
+		echo -e $@
 	fi
 }
 
 function echoColorVerbose {
-	echoVerbose "$BPurple""$1""$Color_Off"
+	echoVerbose "$BPurple""$@""$Color_Off"
 }
-
-
-# if git rev-parse --verify HEAD >/dev/null 2>&1
-# then
-# 	against=HEAD
-# else
-# # Initial commit: diff against an empty tree object
-# 	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
-# fi
