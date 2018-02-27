@@ -54,8 +54,8 @@ if [ "${GIT_HOOKS['files.check.bom']}" -eq "1" ]; then
 fi
 
 # Проверка на стандарты кодирования
-if [ "${GIT_HOOKS['php.check.codestyle']}" -eq "1" ]; then
-	source $(dirname "$0")/check-codestyle.sh
+if [ "${GIT_HOOKS['php.check.codesniffer']}" -eq "1" ]; then
+	source $(dirname "$0")/check-codesniffer.sh
 fi
 
 exit $retcode

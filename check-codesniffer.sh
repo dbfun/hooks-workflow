@@ -10,29 +10,18 @@
 # Установка phpcs для remi:
 # yum --enablerepo=remi,remi-php56 install php-pear-PHP-CodeSniffer.noarch
 
-#
-# Базовые настройки, TODO перенести в конфиг
-#
-
-# Шаблон проверки файлов
-PHPCS_FILE_PATTERN="\.(php|phtml)$"
-# Стандарт кодирования
-PHPCS_CODING_STANDARD=PEAR
-# Файлы для пропуска проверки
-PHPCS_IGNORE=
-# Кодировка
-PHPCS_ENCODING=
-# Пропускать ошибки
-PHPCS_IGNORE_WARNINGS=
 # Временный каталог для проверки файлов
-TMP_STAGING=".tmp_staging-$USER"
+TMP_STAGING="./${GIT_HOOKS['tmp.dir']}/tmp_staging-$USER"
+
+# TODO Стандарт кодирования
+PHPCS_CODING_STANDARD=PEAR
 
 # create temporary copy of staging area
 function make_staging_dir {
 	if [ -e $TMP_STAGING ]; then
 		rm -rf $TMP_STAGING
 	fi
-	mkdir $TMP_STAGING
+	mkdir -p $TMP_STAGING
 }
 
 # delete temporary copy of staging area
@@ -63,19 +52,15 @@ echoColorVerbose $PHPINFO
 # Различные параметры запуска CodeSniffer
 #
 
-if [ "$PHPCS_IGNORE" != "" ]; then
-	PHPCS_OPT_IGNORE="--ignore=$PHPCS_IGNORE"
+if [ "${GIT_HOOKS['phpcs.file.ignore']}" != "" ]; then
+	PHPCS_OPT_IGNORE="--ignore=${GIT_HOOKS['phpcs.file.ignore']}"
 fi
 
-if [ "$PHPCS_SNIFFS" != "" ]; then
-	PHPCS_OPT_SNIFFS="--sniffs=$PHPCS_SNIFFS"
+if [ "${GIT_HOOKS['phpcs.file.encoding']}" != "" ]; then
+	PHPCS_OPT_ENCODING="--encoding=${GIT_HOOKS['phpcs.file.encoding']}"
 fi
 
-if [ "$PHPCS_ENCODING" != "" ]; then
-	PHPCS_OPT_ENCODING="--encoding=$PHPCS_ENCODING"
-fi
-
-if [ "$PHPCS_IGNORE_WARNINGS" == "1" ]; then
+if [ "${GIT_HOOKS['phpcs.warnings.ignore']}" == "1" ]; then
 	PHPCS_OPT_IGNORE_WARNINGS="-n"
 fi
 
@@ -86,7 +71,7 @@ fi
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-FILES_TO_CHECK=$(git diff-index --name-only --cached --diff-filter=ACMR $against -- | grep -iP "$PHPCS_FILE_PATTERN")
+FILES_TO_CHECK=$(git diff-index --name-only --cached --diff-filter=ACMR $against -- | grep -iP "${GIT_HOOKS['phpcs.file.pattern']}")
 
 if [ "$FILES_TO_CHECK" == "" ]; then
 	IFS=$SAVEIFS
@@ -110,7 +95,7 @@ done
 
 IFS=$SAVEIFS
 
-PHPCS_OUTPUT=$($PHPCS_BIN -s $PHPCS_OPT_IGNORE_WARNINGS --standard=$PHPCS_CODING_STANDARD $PHPCS_OPT_ENCODING $PHPCS_OPT_IGNORE $PHPCS_OPT_SNIFFS $TMP_STAGING)
+PHPCS_OUTPUT=$($PHPCS_BIN -s $PHPCS_OPT_IGNORE_WARNINGS --standard=$PHPCS_CODING_STANDARD $PHPCS_OPT_ENCODING $PHPCS_OPT_IGNORE $TMP_STAGING)
 
 if [ $? -ne 0 ]; then
 	echo -e "$Red""Коммит отклонен: не пройден контроль стиля CodeSniffer (показаны первые 100 строк):""$Color_Off"

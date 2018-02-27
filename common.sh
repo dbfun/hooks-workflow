@@ -49,17 +49,39 @@ if [[ ! -n "${GIT_HOOKS['files.check.bom']}" ]]; then
   GIT_HOOKS[files.check.bom]='1'
 fi
 
-if [[ ! -n "${GIT_HOOKS['php.check.codestyle']}" ]]; then
-  GIT_HOOKS[php.check.codestyle]='1'
+if [[ ! -n "${GIT_HOOKS['php.check.codesniffer']}" ]]; then
+  GIT_HOOKS[php.check.codesniffer]='1'
 fi
 
 if [[ ! -n "${GIT_HOOKS['php.bin']}" ]]; then
 	GIT_HOOKS[php.bin]=`which php`
 fi
 
+if [[ ! -n "${GIT_HOOKS['tmp.dir']}" ]]; then
+	GIT_HOOKS[tmp.dir]='tmp'
+fi
+
 if [[ ! -n "${GIT_HOOKS['phpcs.bin']}" ]]; then
 	GIT_HOOKS[phpcs.bin]=`which phpcs`
 fi
+
+if [[ ! -n "${GIT_HOOKS['phpcs.file.pattern']}" ]]; then
+	GIT_HOOKS[phpcs.file.pattern]='\.(php|phtml)$'
+fi
+
+if [[ ! -n "${GIT_HOOKS['phpcs.file.ignore']}" ]]; then
+	GIT_HOOKS[phpcs.file.ignore]=''
+fi
+
+if [[ ! -n "${GIT_HOOKS['phpcs.file.encoding']}" ]]; then
+	GIT_HOOKS[phpcs.file.encoding]=''
+fi
+
+if [[ ! -n "${GIT_HOOKS['phpcs.warnings.ignore']}" ]]; then
+	GIT_HOOKS[phpcs.warnings.ignore]='0'
+fi
+
+
 
 
 #
