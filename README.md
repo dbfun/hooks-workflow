@@ -56,6 +56,19 @@ git commit -nm "обновление задач" -- .
 
 Родная конфигурация git для настройки хуков не используется: @see `config.sh`.
 
+# CodeSniffer
+
+Для проверки Code Style используется CodeSniffer, который необходимо минимально настроить: указать путь до phpcs и PHP (если не указаны). Также не стоит забывать, что на машине может быть установлено несколько версий PHP и phpcs, что также настраивается в `config.sh`.
+
+Возможно использовать предустановленные стандарты (`Generic`, `MySource`, `PEAR`, `PSR1`, `PSR2`, `Squiz`, `Zend`), либо написать собственные.
+Настройки хранятся в `PEAR_PATH/PHP/CodeSniffer/Standards/`, например `/usr/share/pear/PHP/CodeSniffer/src/Standards/`.
+
+Советы по добавлению стандарта:
+
+* Скопировать стандарт из этого репозитория `sudo cp -R ./codesniffer-standarts/IEK /usr/share/pear/PHP/CodeSniffer/src/Standards/`
+* Сделать симлинки из этого репозитория: `sudo ln -s /home/user/git-test/.git/hooks/codesniffer-standarts/IEK /usr/share/pear/PHP/CodeSniffer/src/Standards/`
+* Использовать абсолютный путь к XML файлу со стандартом, например `/home/user/git-test/.git/hooks/codesniffer-standards/IEK/rulest.xml`
+
 # Ссылки для изучения
 
 ## Git hooks

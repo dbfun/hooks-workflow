@@ -56,6 +56,15 @@ GIT_HOOKS[commit.msg.regexp]='[0-9]+:.+'
 # Default value: `which phpcs`
 # GIT_HOOKS[phpcs.bin]='/usr/bin/phpcs'
 
+# Используемый формат проверки Code Style
+# Возможно использовать предустановленные стандарты: Generic, MySource, PEAR, PSR1, PSR2, Squiz, Zend, либо написать собственные стандарты.
+# @see http://pear.php.net/manual/en/package.php.php-codesniffer.annotated-ruleset.php
+# Возможно использовать абсолютный путь к XML файлу со стандартом, например
+# '/home/user/git-test/.git/hooks/codesniffer-standards/IEK/rulest.xml'
+# Default value: 'PSR2'
+GIT_HOOKS[phpcs.standard]='IEK'
+
+
 # Шаблон проверки PHP-файлов
 # Default value: '\.(php|phtml)$'
 # GIT_HOOKS[phpcs.file.pattern]='\.(php|phtml)$'

@@ -65,6 +65,10 @@ if [[ ! -n "${GIT_HOOKS['phpcs.bin']}" ]]; then
 	GIT_HOOKS[phpcs.bin]=`which phpcs`
 fi
 
+if [[ ! -n "${GIT_HOOKS['phpcs.standard']}" ]]; then
+	GIT_HOOKS[phpcs.standard]='PSR2'
+fi
+
 if [[ ! -n "${GIT_HOOKS['phpcs.file.pattern']}" ]]; then
 	GIT_HOOKS[phpcs.file.pattern]='\.(php|phtml)$'
 fi
