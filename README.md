@@ -67,7 +67,7 @@ git commit -nm "обновление задач" -- .
 
 * Скопировать стандарт из этого репозитория `sudo cp -R ./codesniffer-standarts/IEK /usr/share/pear/PHP/CodeSniffer/src/Standards/`
 * Сделать симлинки из этого репозитория: `sudo ln -s /home/user/git-test/.git/hooks/codesniffer-standarts/IEK /usr/share/pear/PHP/CodeSniffer/src/Standards/`
-* Использовать абсолютный путь к XML файлу со стандартом, например `/home/user/git-test/.git/hooks/codesniffer-standards/IEK/rulest.xml`
+* Использовать абсолютный путь к XML файлу со стандартом, например `/home/user/git-test/.git/hooks/codesniffer-standards/IEK/ruleset.xml`
 
 # Ссылки для изучения
 

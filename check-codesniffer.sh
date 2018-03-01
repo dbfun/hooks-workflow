@@ -95,9 +95,9 @@ IFS=$SAVEIFS
 PHPCS_OUTPUT=$($PHPCS_BIN -s $PHPCS_OPT_IGNORE_WARNINGS --standard=${GIT_HOOKS['phpcs.standard']} $PHPCS_OPT_ENCODING $PHPCS_OPT_IGNORE $TMP_STAGING)
 
 if [ $? -ne 0 ]; then
-	echo -e "$Red""Коммит отклонен: не пройден контроль стиля CodeSniffer (показаны первые 100 строк):""$Color_Off"
-	echo "$PHPCS_OUTPUT" | head -n100
-	echo
+	NLINES=`echo "$PHPCS_OUTPUT" | wc -l`
+	echo -e "$Red""Коммит отклонен: не пройден контроль стиля CodeSniffer по стандарту ${GIT_HOOKS['phpcs.standard']} (строки ${GIT_HOOKS['phpcs.errors.lines']} из $NLINES):""$Color_Off"
+	echo "$PHPCS_OUTPUT" | head -n${GIT_HOOKS['phpcs.errors.lines']}
 	retcode=1
 fi
 

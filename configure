@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#################################################
+#																								#
+#			Скрипт первоначальной настройки						#
+#																								#
+#################################################
+
+if [ -f "$(dirname $0)/etc/config.sh" ]; then
+	echo "Файл etc/config.sh уже существует. Отредактируйте его или удалите."
+	exit 1
+fi
+
+cp "$(dirname $0)/etc/config.template.sh" "$(dirname $0)/etc/config.sh"
+if [ $? = 0 ]; then
+	echo "Создан файл конфигурации etc/config.sh, дополнительные настройки вносятся вручную"
+else
+	echo "Ошибка копирования шаблона конфигурации из etc/config.template.sh в etc/config.sh"
+	exit 1
+fi
+
+VALUE=$(whiptail --title "Путь до PHP CLI" --inputbox "Укажите путь до PHP CLI" --ok-button "Да" --cancel-button "Оставить умолчание" 10 60 `which php` 3>&1 1>&2 2>&3)
+if [ $? = 0 ]; then
+	echo "GIT_HOOKS[php.bin]='$VALUE'" >> "$(dirname $0)/etc/config.sh"
+fi
+
+VALUE=$(whiptail --title "Стандарт кодирования" --inputbox "Стандарт кодирования (Generic, MySource, PEAR, PSR1, PSR2, Squiz, Zend, либо абсолютный путь до XML, например /home/user/phpcs/ruleset.xml)" --ok-button "Да" --cancel-button "Оставить умолчание" 10 60 'PSR2' 3>&1 1>&2 2>&3)
+if [ $? = 0 ]; then
+	echo "GIT_HOOKS[phpcs.standard]='$VALUE'" >> "$(dirname $0)/etc/config.sh"
+fi

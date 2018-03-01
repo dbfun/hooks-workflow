@@ -2,7 +2,7 @@
 
 # Проверка коммита на соответствие стандартам
 
-source $(dirname "$0")/common.sh
+source "$(dirname $0)/common.sh"
 
 echoColorVerbose "hook: pre-commit"
 
@@ -55,7 +55,7 @@ fi
 
 # Проверка на стандарты кодирования
 if [ "${GIT_HOOKS['php.check.codesniffer']}" -eq "1" ]; then
-	source $(dirname "$0")/check-codesniffer.sh
+	source "$(dirname $0)/check-codesniffer.sh"
 fi
 
 exit $retcode

@@ -14,7 +14,7 @@ else
 	# Включаем встроенное раскрашивание git
 	alias git='git -c color.ui=always'
 	# Библиотека цветов
-	source $(dirname "$0")/colors.sh
+	source "$(dirname $0)/colors.sh"
 fi
 
 # С чем делать git-diff
@@ -26,66 +26,6 @@ else
 # Initial commit: diff against an empty tree object
 	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
 fi
-
-
-#
-# Конфигурация
-#
-
-declare -A GIT_HOOKS
-source $(dirname "$0")/config.sh
-
-# Если значения не определены, загружаем умолчания
-
-if [[ ! -n "${GIT_HOOKS['files.check.tmp']}" ]]; then
-  GIT_HOOKS[files.check.tmp]='1'
-fi
-
-if [[ ! -n "${GIT_HOOKS['files.check.whitespace']}" ]]; then
-  GIT_HOOKS[files.check.whitespace]='1'
-fi
-
-if [[ ! -n "${GIT_HOOKS['files.check.bom']}" ]]; then
-  GIT_HOOKS[files.check.bom]='1'
-fi
-
-if [[ ! -n "${GIT_HOOKS['php.check.codesniffer']}" ]]; then
-  GIT_HOOKS[php.check.codesniffer]='1'
-fi
-
-if [[ ! -n "${GIT_HOOKS['php.bin']}" ]]; then
-	GIT_HOOKS[php.bin]=`which php`
-fi
-
-if [[ ! -n "${GIT_HOOKS['tmp.dir']}" ]]; then
-	GIT_HOOKS[tmp.dir]='tmp'
-fi
-
-if [[ ! -n "${GIT_HOOKS['phpcs.bin']}" ]]; then
-	GIT_HOOKS[phpcs.bin]=`which phpcs`
-fi
-
-if [[ ! -n "${GIT_HOOKS['phpcs.standard']}" ]]; then
-	GIT_HOOKS[phpcs.standard]='PSR2'
-fi
-
-if [[ ! -n "${GIT_HOOKS['phpcs.file.pattern']}" ]]; then
-	GIT_HOOKS[phpcs.file.pattern]='\.(php|phtml)$'
-fi
-
-if [[ ! -n "${GIT_HOOKS['phpcs.file.ignore']}" ]]; then
-	GIT_HOOKS[phpcs.file.ignore]=''
-fi
-
-if [[ ! -n "${GIT_HOOKS['phpcs.file.encoding']}" ]]; then
-	GIT_HOOKS[phpcs.file.encoding]=''
-fi
-
-if [[ ! -n "${GIT_HOOKS['phpcs.warnings.ignore']}" ]]; then
-	GIT_HOOKS[phpcs.warnings.ignore]='0'
-fi
-
-
 
 
 #
@@ -102,3 +42,17 @@ function echoVerbose {
 function echoColorVerbose {
 	echoVerbose "$BPurple""$@""$Color_Off"
 }
+
+#
+# Конфигурация
+#
+
+declare -A GIT_HOOKS
+# Загружаем умолчания
+source "$(dirname $0)/etc/config-defaults.sh"
+# Переопределяем настройки
+if [ -f "$(dirname $0)/etc/config.sh" ]; then
+	source "$(dirname $0)/etc/config.sh"
+else
+	echoColorVerbose "Настройки проекта не найдены (config.sh). Используются значения по-умолчанию"
+fi
