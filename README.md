@@ -6,10 +6,20 @@
 
 Другой способ - скопировать в каталог `.git/hooks` текущего проекта.
 
+Автоматическая установка в существующий проект, находясь в каталоге, находящемся под управлением git:
+
+для curl:
+
+`sh -c "$(curl -fsSL https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh)`
+
+для wget:
+
+`sh -c "$(wget https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh -O -)`
+
 Советы:
 
-* Сделать симлинки из `.git/hooks` в рабочий каталог, тогда и сами хуки будут под управлением версиями.
-* Сделать симлинки из `.git/hooks` в отдельный каталог, тогда возможно менять правила сразу для всех проектов.
+* Сделать симлинк из `.git/hooks` в рабочий каталог, тогда и сами хуки будут под управлением версиями.
+* Сделать симлинк из `.git/hooks` в отдельный каталог, тогда возможно менять правила сразу для всех проектов.
 
 # Теория: какие хуки возможно использовать и для чего?
 
@@ -89,5 +99,6 @@ git commit -nm "обновление задач" -- .
 
 # TODO
 
-  * Проверка на копипасту: [phpcpd.noarch : Copy/Paste Detector (CPD) for PHP code](https://github.com/sebastianbergmann/phpcpd)
-	* [PMD](https://pmd.github.io/)?
+* Два режима: строгий с подсказками и обычный. Строгий проверяет неудаленные "TODO", "console.log", "var_dump" и прочий хлам.
+* Проверка на копипасту: [phpcpd.noarch : Copy/Paste Detector (CPD) for PHP code](https://github.com/sebastianbergmann/phpcpd)
+* [PMD](https://pmd.github.io/)?
