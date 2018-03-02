@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #################################################
 #																								#
@@ -8,13 +8,13 @@
 
 # Находясь в любом каталоге, находящемся под управлением git, выполнить любое из действий (два варианта устнановки):
 
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh)"
-# sh -c "$(wget https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh -O -)"
+# /usr/bin/env bash -c "$(curl -fsSL https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh)"
+# /usr/bin/env bash -c "$(wget https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh -O -)"
 
 # Ручная установка, находясь в корне проекта:
 # cd .git/hooks
 # echo y | rm -rf ./*
-# git clone https://github.com/dbfun/hooks-workflow .
+# git clone https://github.com/dbfun/hooks-workflow.git .
 # ./configure
 
 GIT_ROOT=`git rev-parse --show-toplevel`
@@ -28,11 +28,11 @@ if [ ! -d "$GIT_ROOT/.git/hooks" ]; then
 	exit 1
 fi
 
+echo "Необходимо очистить каталог с хуками $GIT_ROOT/.git/hooks:"
 cd "$GIT_ROOT/.git/hooks"
-ls -la
+ls -l
 
-echo "Необходимо очистить каталог с хуками $GIT_ROOT/.git/hooks"
-read -p "Удалить все эти файлы (y/n)?" -r
+read -p "Удалить все эти файлы (y/n)?"
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 	echo "Разумно"
 	exit 1

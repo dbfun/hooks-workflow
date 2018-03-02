@@ -10,11 +10,11 @@
 
 для curl:
 
-`sh -c "$(curl -fsSL https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh)`
+`/usr/bin/env bash -c "$(curl -fsSL https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh)"`
 
 для wget:
 
-`sh -c "$(wget https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh -O -)`
+`/usr/bin/env bash -c "$(wget https://raw.githubusercontent.com/dbfun/hooks-workflow/master/tools/install.sh -O -)"`
 
 Советы:
 
