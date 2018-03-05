@@ -7,12 +7,13 @@
 shopt -s expand_aliases
 
 # Следует ли раскрашивать вывод?
+# core.quotepath=off - исправление проблемы с файлами в unicode кодировке
 if [ -n "$GIT_CLI" ] && [ "$GIT_CLI" -eq "1" ]; then
 	# Отключаем встроенное раскрашивание git
-	alias git='git -c color.ui=false'
+	alias git='git -c core.quotepath=off -c color.ui=false'
 else
 	# Включаем встроенное раскрашивание git
-	alias git='git -c color.ui=always'
+	alias git='git -c core.quotepath=off -c color.ui=always'
 	# Библиотека цветов
 	source "$(dirname $0)/colors.sh"
 fi
