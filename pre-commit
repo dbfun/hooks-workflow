@@ -18,6 +18,7 @@ retcode=0
 
 if [ "${GIT_HOOKS['files.check.tmp']}" -eq "1" ]; then
 	FILES_PATTERN='\.(tmp|old|log|swp|bak)$'
+	# фильтруем только "новые" - Added, Copied, Renamed, Type changed
 	FORBIDDEN=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP "$FILES_PATTERN")
 	if [ "$?" -eq "0" ]; then
 		echo -e "$Red"Коммит отклонен: найдены запрещенные файлы. Пожалуйста, удалите их:"$Color_Off"
@@ -34,7 +35,7 @@ if [ "${GIT_HOOKS['files.check.whitespace']}" -eq "1" ]; then
 	WHITESPACE=$(git diff --check --cached)
 	if [ "$?" -ne "0" ]; then
 		echo -e "$Red"Коммит отклонен: не пройден контроль пробелов:"$Color_Off"
-		echo "$WHITESPACE"
+		echo -e $Cyan"$WHITESPACE"$Color_Off
 		echo
 		retcode=1
 	fi
@@ -44,13 +45,98 @@ fi
 # Проверка на BOM-символ
 if [ "${GIT_HOOKS['files.check.bom']}" -eq "1" ]; then
 	FILES_PATTERN='\.(php|js|styl|css|html?)$'
-	WITH_BOM=$(git --no-pager diff --cached --name-only --diff-filter=ACRT | grep -iP "$FILES_PATTERN" | xargs --no-run-if-empty file | grep "with BOM")
+	# фильтруем только "измененные" - Added, Copied, Renamed, Type changed, Modified
+	WITH_BOM=$(git --no-pager diff --cached --name-only --diff-filter=ACRTM | grep -iP "$FILES_PATTERN" | xargs --no-run-if-empty file | grep "with BOM")
 	if [ "$?" -eq "0" ]; then
 		echo -e "$Red"Коммит отклонен: найден символ BOM. Пожалуйста, исправьте:"$Color_Off"
 		echo -e $Cyan"$WITH_BOM"$Color_Off
 		echo
 		retcode=1
 	fi
+fi
+
+# Проверка на права доступа
+if [ "${GIT_HOOKS['files.permissions.check']}" -eq "1" ]; then
+	PERM_ATTR_OK=1
+	PERM_OWN_OK=1
+	PERM_ERR_ATTR=
+	PERM_ERR_OWN=
+	SAVEIFS=$IFS
+	IFS=$(echo -en "\n\b")
+	# фильтруем только "измененные" - Added, Copied, Renamed, Type changed, Modified
+	FILES_TO_CHECK=$(git --no-pager diff --cached --name-only --diff-filter=ACRTM)
+	if [ "$FILES_TO_CHECK" != "" ]; then
+
+		F_PERM_MIN="${GIT_HOOKS['files.permissions.min']}"
+		for FILE in $FILES_TO_CHECK
+		do
+			F_AND_MASK=$(printf '%#x' $((0x$F_PERM_MIN & `stat -c "0x%a" "$FILE"`)))
+			if [ "$F_AND_MASK" != "0x$F_PERM_MIN" ]; then
+				PERM_ATTR_OK=0
+				if [ -z "$PERM_ERR_ATTR" ]; then
+					PERM_ERR_ATTR="$FILE"
+				else
+					PERM_ERR_ATTR="$PERM_ERR_ATTR\n$FILE"
+				fi
+			fi
+			if [ "${GIT_HOOKS['files.permissions.group']}" != "`stat -c "%G" "$FILE"`" ]; then
+				PERM_OWN_OK=0
+				if [ -z "$PERM_ERR_OWN" ]; then
+					PERM_ERR_OWN="$FILE"
+				else
+					PERM_ERR_OWN="$PERM_ERR_OWN\n$FILE"
+				fi
+			fi
+		done
+
+		if [ $PERM_ATTR_OK -ne 1 ]; then
+			retcode=1
+			echo -e "$Red"Коммит отклонен: права на файлы не соответствуют минимальной маске $F_PERM_MIN:"$Color_Off"
+			echo -e $Cyan"$PERM_ERR_ATTR"$Color_Off
+			echo
+		fi
+
+		if [ $PERM_OWN_OK -ne 1 ]; then
+			retcode=1
+			echo -e "$Red"Коммит отклонен: файлы не принадлежат группе "${GIT_HOOKS['files.permissions.group']}":"$Color_Off"
+			echo -e $Cyan"$PERM_ERR_OWN"$Color_Off
+			echo
+		fi
+
+	fi
+	IFS=$SAVEIFS
+fi
+
+# Проверка на большие файлы
+if [ ! -z "${GIT_HOOKS['files.size.limit']}" ]; then
+	SAVEIFS=$IFS
+	IFS=$(echo -en "\n\b")
+	# фильтруем только "новые" - Added, Copied, Renamed, Type changed
+	FILES_TO_CHECK=$(git --no-pager diff --cached --name-only --diff-filter=ACRT)
+
+	if [ "$FILES_TO_CHECK" != "" ]; then
+		BIG_FILES_OK=1
+		BIG_FILES=
+		for FILE in $FILES_TO_CHECK
+		do
+			if [ `du -m "$FILE" | awk '{print $1}'` -gt "${GIT_HOOKS['files.size.limit']}" ]; then
+				BIG_FILES_OK=0
+				if [ -z "$BIG_FILES" ]; then
+					BIG_FILES="$FILE"
+				else
+					BIG_FILES="$BIG_FILES\n$FILE"
+				fi
+			fi
+		done
+
+		if [ $BIG_FILES_OK -ne 1 ]; then
+			retcode=1
+			echo -e "$Red"Коммит отклонен: файлы превышают лимит ${GIT_HOOKS['files.size.limit']} Мб:"$Color_Off"
+			echo -e $Cyan"$BIG_FILES"$Color_Off
+			echo
+		fi
+	fi
+	IFS=$SAVEIFS
 fi
 
 # Проверка на стандарты кодирования

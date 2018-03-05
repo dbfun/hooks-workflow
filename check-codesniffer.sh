@@ -68,7 +68,8 @@ fi
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 
-FILES_TO_CHECK=$(git diff-index --name-only --cached --diff-filter=ACMR $against -- | grep -iP "${GIT_HOOKS['phpcs.file.pattern']}")
+# фильтруем только "измененные" - Added, Copied, Renamed, Type changed, Modified
+FILES_TO_CHECK=$(git diff-index --name-only --cached --diff-filter=ACRTM $against -- | grep -iP "${GIT_HOOKS['phpcs.file.pattern']}")
 
 if [ "$FILES_TO_CHECK" == "" ]; then
 	IFS=$SAVEIFS

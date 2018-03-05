@@ -27,6 +27,18 @@ GIT_HOOKS[files.check.whitespace]='1'
 # Проверка на BOM-символ
 GIT_HOOKS[files.check.bom]='1'
 
+# Проверка на права доступа
+GIT_HOOKS[files.permissions.check]='1'
+# Минимальные права, которые должны быть у файла
+GIT_HOOKS[files.permissions.min]='664'
+# Группа, которой должен принадлежать файл
+GIT_HOOKS[files.permissions.group]='apache'
+
+# Проверка на большие файлы
+# Лимит указывается в Мб
+# Для пропуска проверки следует указать пустое значение (GIT_HOOKS[files.size.limit]=)
+GIT_HOOKS[files.size.limit]=100
+
 # Путь до PHP CLI - необходимо правильно указать для корректного запуска CodeSniffer
 # Для нативной установки '/usr/bin/php' или `which php`
 # Для 5.6 remi: /opt/remi/php56/root/usr/bin/php
